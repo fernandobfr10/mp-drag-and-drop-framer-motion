@@ -1,6 +1,28 @@
-import songs from './data/songs.json';
+import { useEffect, useState } from "react";
+import { Reorder } from "framer-motion";
+
+import songs from "./data/songs.json";
+
+type Song = {
+  id: number;
+  title: string;
+  artist: string;
+  duration: string;
+  image: string;
+};
 
 function App() {
+  const [songsList, setSongsList] = useState<Song[]>([]);
+
+  useEffect(() => {
+    setSongsList(songs);
+  }, []);
+
+  function handleReorder(newSongsList: Song[]) {
+    console.log(newSongsList);
+    setSongsList(newSongsList);
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen text-slate-800 bg-zinc-700">
       <div className="w-full max-w-lg px-4 py-10 my-10 bg-white rounded-lg shadow-2xl">
@@ -10,16 +32,26 @@ function App() {
           </h1>
         </div>
         <div className="">
-          <div>
-            {songs.map((song) => (
-              <div
+          <Reorder.Group as="div" values={songsList} onReorder={handleReorder}>
+            {songsList.map((song) => (
+              <Reorder.Item
+                as="div"
                 key={song.id}
-                className="flex items-center w-full gap-6 p-4 mx-auto mb-4 card "
+                value={song}
+                className="flex items-center w-full gap-6 p-4 mx-auto mb-4 card"
               >
                 <span className="text-slate-400 border-slate-200 cursor-grab">
-                  <img src="/grab-icon.svg" alt="grab icon" className="w-8 h-8" />
+                  <img
+                    src="/grab-icon.svg"
+                    alt="grab icon"
+                    className="w-8 h-8 pointer-events-none"
+                  />
                 </span>
-                <img src={song.image} alt="" className="w-14 hue-rotate-30" />
+                <img
+                  src={song.image}
+                  alt=""
+                  className="w-14 hue-rotate-30 pointer-events-none"
+                />
                 <div className="w-full card-header">
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold ">{song.title}</h3>
@@ -27,9 +59,9 @@ function App() {
                   </div>
                   <p className="text-sm text-slate-400">{song.artist}</p>
                 </div>
-              </div>
+              </Reorder.Item>
             ))}
-          </div>
+          </Reorder.Group>
         </div>
       </div>
     </div>
